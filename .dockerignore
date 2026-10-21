@@ -1,0 +1,12 @@
+.git
+.venv
+.env
+.env.*
+.pnpm-store
+frontend/node_modules
+frontend/.next
+data/runtime
+data/sources
+__pycache__
+.pytest_cache
+*.egg-info

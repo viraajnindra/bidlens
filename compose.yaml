@@ -1,0 +1,61 @@
+x-backend: &backend
+  build: .
+  environment:
+    DATABASE_URL: postgresql+psycopg://bidlens:bidlens@db:5432/bidlens
+    DATA_DIR: /app/data/runtime
+    OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    OPENAI_MODEL: ${OPENAI_MODEL:-}
+    PDF_ENGINE: pypdf
+  volumes:
+    - documents:/app/data/runtime
+    - ./data/sources:/app/data/sources
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: bidlens
+      POSTGRES_PASSWORD: bidlens
+      POSTGRES_DB: bidlens
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bidlens"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  seed:
+    <<: *backend
+    command: python -m backend.seed
+    depends_on:
+      db:
+        condition: service_healthy
+  api:
+    <<: *backend
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  worker:
+    <<: *backend
+    command: python -m backend.worker
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+  web:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  database:
+  documents:

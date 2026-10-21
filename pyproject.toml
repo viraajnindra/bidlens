@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bidlens"
+version = "0.1.0"
+description = "Evidence-first government bid qualification and amendment impact analysis"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn[standard]>=0.32,<1",
+  "sqlalchemy>=2.0,<3", "pydantic>=2.10,<3", "pydantic-settings>=2.6,<3",
+  "httpx>=0.28,<1", "beautifulsoup4>=4.12,<5", "pypdf>=5,<7", "python-dotenv>=1,<2",
+  "openai>=2,<3", "python-multipart>=0.0.20,<1", "psycopg[binary]>=3.2,<4"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.11,<1"]
+ocr = ["docling>=2,<3"]
+
+[tool.setuptools.packages.find]
+include = ["backend*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/conftest.py" = ["E402"]
+"scripts/dev.py" = ["E402"]
