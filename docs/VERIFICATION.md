@@ -8,6 +8,7 @@ Verified locally on October 21, 2026 using Python 3.12 and Node.js 24.
 | Rule engine | 97% statement coverage; missing evidence, preferences, conflicts, and cache invalidation covered |
 | API | 90% statement coverage; validation, stale saves, reviews, imports, and audit events covered |
 | TypeScript / production Next.js build | Passed |
+| GitHub Actions | Backend and frontend checks passed on the published repository |
 | Python lint and formatting | Passed |
 | Frontend formatting | Passed |
 | Official PDF integrity | Both source SHA-256 hashes verified; 35 + 50 pages extracted successfully |
